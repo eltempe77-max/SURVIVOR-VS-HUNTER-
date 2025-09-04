@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Killer vs Hunter Online</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #111;
+      color: #eee;
+    }
+    #online {
+      font-size: 24px;
+      color: lime;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    #countdown {
+      font-size: 20px;
+      margin: 15px 0;
+      color: yellow;
+    }
+    #role {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    #internet {
+      margin-top: 10px;
+      font-style: italic;
+      color: cyan;
+    }
+    #players {
+      margin-top: 15px;
+      font-size: 18px;
+      color: orange;
+    }
+  </style>
+</head>
+<body>
+  <div id="online">ONLINE</div>
+  <h1>Killer vs Hunter</h1>
+  <div id="countdown">Game mulai dalam 60 detik</div>
+  <div id="role">Menunggu...</div>
+  <div id="internet"></div>
+  <div id="players"></div>
+
+  <script>
+    // ====== DETEKSI DEVICE ======
+    let device = "PC";
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      device = "Handphone";
+    } else if (/Laptop|Windows|Mac|Linux/i.test(navigator.userAgent)) {
+      device = "Laptop/PC";
+    }
+    document.getElementById("internet").innerText =
+      "Kekuatan Internet menyesuaikan: " + device;
+
+    // ====== JUMLAH PLAYER ONLINE (simulasi lokal) ======
+    let total = localStorage.getItem("onlinePlayers");
+    if (!total) total = 0;
+    total = parseInt(total) + 1;
+    localStorage.setItem("onlinePlayers", total);
+    document.getElementById("players").innerText =
+      "Jumlah Player Online: " + total;
+
+    window.addEventListener("beforeunload", () => {
+      let t = parseInt(localStorage.getItem("onlinePlayers"));
+      localStorage.setItem("onlinePlayers", Math.max(0, t - 1));
+    });
+
+    // ====== COUNTDOWN GAME ======
+    let waktu = 60;
+    let countdownEl = document.getElementById("countdown");
+    let roleEl = document.getElementById("role");
+
+    let timer = setInterval(() => {
+      waktu--;
+      countdownEl.innerText = "Game mulai dalam " + waktu + " detik";
+
+      if (waktu <= 0) {
+        clearInterval(timer);
+        countdownEl.innerText = "Game dimulai!";
+        
+        // Rolling role: Hunter, Killer, atau Survivor
+        let roles = ["Hunter", "Killer", "Survivor"];
+        let pilih = roles[Math.floor(Math.random() * roles.length)];
+        roleEl.innerText = "Kamu adalah: " + pilih;
+        roleEl.style.color = pilih === "Killer" ? "red" : "lime";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
